@@ -100,11 +100,41 @@ export default function Onboarding({ session, onConfigSaved }) {
     console.log(`[Onboarding] ${tag} upserting payload:`, payload)
     const { data, error } = await supabase
       .from('user_configuration')
-      .upsert(payload)
+      .upsert(payload, { onConflict: 'user_id' })
       .select()
-    console.log(`[Onboarding] ${tag} upsert result:`, { data, error })
+    if (error) {
+      console.error(`[Onboarding] ${tag} — FULL ERROR OBJECT:`, error)
+      console.error(`[Onboarding] ${tag} — error.message:`, error.message)
+      console.error(`[Onboarding] ${tag} — error.details:`, error.details)
+      console.error(`[Onboarding] ${tag} — error.hint:`, error.hint)
+      console.error(`[Onboarding] ${tag} — error.code:`, error.code)
+      console.error(`[Onboarding] ${tag} — JSON:`, JSON.stringify(error, null, 2))
+    } else {
+      console.log(`[Onboarding] ${tag} upsert OK, returned rows:`, data)
+    }
     return { data, error }
   }
+
+  // One-time diagnostic probe on mount — a safe SELECT that tells us
+  // immediately whether the table exists and RLS lets us read.
+  useEffect(() => {
+    (async () => {
+      console.log('[Onboarding] diagnostic probe starting...')
+      const { data, error } = await supabase
+        .from('user_configuration')
+        .select('user_id')
+        .eq('user_id', session.user.id)
+      console.log('[Onboarding] probe result:', { data, error })
+      if (error) {
+        console.error('[Onboarding] probe ERROR — this is likely the same cause as the save failures:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        })
+      }
+    })()
+  }, [session])
 
   const savePartial = async (extra = {}) => {
     setLoading(true)
@@ -136,8 +166,13 @@ export default function Onboarding({ session, onConfigSaved }) {
       onboarding_skipped: true,
     }, 'handleExitSkip')
     if (error) {
-      console.error('[Onboarding] SKIP FAILED — not navigating:', error)
-      alert('Could not save — please try again. Details in console.')
+      const detail = [
+        `Message: ${error.message || '(none)'}`,
+        `Code: ${error.code || '(none)'}`,
+        `Details: ${error.details || '(none)'}`,
+        `Hint: ${error.hint || '(none)'}`,
+      ].join('\n')
+      alert(`Save failed — Supabase returned:\n\n${detail}\n\nFull error object is in browser console.`)
       setLoading(false)
       return
     }
@@ -168,8 +203,13 @@ export default function Onboarding({ session, onConfigSaved }) {
       completed_at: new Date().toISOString(),
     }, 'handleComplete')
     if (error) {
-      console.error('[Onboarding] COMPLETE FAILED — not advancing:', error)
-      alert('Could not save — please try again. Details in console.')
+      const detail = [
+        `Message: ${error.message || '(none)'}`,
+        `Code: ${error.code || '(none)'}`,
+        `Details: ${error.details || '(none)'}`,
+        `Hint: ${error.hint || '(none)'}`,
+      ].join('\n')
+      alert(`Save failed — Supabase returned:\n\n${detail}\n\nFull error object is in browser console.`)
       setLoading(false)
       return
     }
