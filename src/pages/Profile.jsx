@@ -452,7 +452,7 @@ export default function Profile({ session }) {
           </div>
         </Panel>
 
-        {!config.onboarding_completed && (
+        {config.onboarding_skipped && (
           <div style={s.onboardLink}>
             <span style={s.onboardLinkText}>✨ Complete the full onboarding for deeper sessions</span>
             <button style={s.secondaryBtn} onClick={() => navigate('/onboarding')}>Begin →</button>

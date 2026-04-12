@@ -47,7 +47,7 @@ export default function Dashboard({ session }) {
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
   const formatDate = (d) => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 
-  const showOnboardingBanner = userConfig && !userConfig.onboarding_completed && !bannerDismissed
+  const showOnboardingBanner = userConfig?.onboarding_skipped === true && !bannerDismissed
 
   const s = {
     page: { minHeight: '100vh', background: '#0a0805', color: '#e8dfc8' },

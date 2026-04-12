@@ -113,21 +113,22 @@ export default function Onboarding({ session }) {
 
   const handleWelcomeBegin = () => goStep(1)
 
-  const handleWelcomeSkip = async () => {
+  // Unified exit: creates/updates a user_configuration record marked as
+  // skipped + completed so Dashboard stops redirecting to /onboarding.
+  // Preserves any partial data the user has entered so far.
+  const handleExitSkip = async () => {
+    setLoading(true)
     await supabase.from('user_configuration').upsert({
       user_id: session.user.id,
+      ...config,
+      onboarding_completed: true,
       onboarding_skipped: true,
     })
+    setLoading(false)
     navigate('/dashboard')
   }
 
   const handleNext = async () => {
-    await savePartial()
-    if (step < 5) goStep(step + 1)
-    else handleComplete()
-  }
-
-  const handleSkip = async () => {
     await savePartial()
     if (step < 5) goStep(step + 1)
     else handleComplete()
@@ -144,6 +145,7 @@ export default function Onboarding({ session }) {
       user_id: session.user.id,
       ...config,
       onboarding_completed: true,
+      onboarding_skipped: false,
       completed_at: new Date().toISOString(),
     })
     setLoading(false)
@@ -235,7 +237,7 @@ export default function Onboarding({ session }) {
           </p>
           <div style={s.welcomeBtns}>
             <button style={s.primaryBtn} onClick={handleWelcomeBegin}>Begin →</button>
-            <button style={s.skipLink} onClick={handleWelcomeSkip} disabled={loading}>
+            <button style={s.skipLink} onClick={handleExitSkip} disabled={loading}>
               Skip for now — take me to my dashboard
             </button>
           </div>
@@ -270,7 +272,7 @@ export default function Onboarding({ session }) {
         <span style={s.topMM}>MM</span>Mystic Madman
       </div>
       <ProgressPips current={step} total={5} />
-      <button style={s.exitLink} onClick={() => navigate('/dashboard')}>Exit</button>
+      <button style={s.exitLink} onClick={handleExitSkip} disabled={loading}>Exit</button>
     </div>
   )
 
@@ -312,7 +314,7 @@ export default function Onboarding({ session }) {
             <button style={s.backBtn} onClick={handleBack}>← Back</button>
             <button style={s.primaryBtn} onClick={handleNext} disabled={loading}>Continue →</button>
           </div>
-          <button style={s.skipLink} onClick={handleSkip}>Skip this step</button>
+          <button style={s.skipLink} onClick={handleExitSkip} disabled={loading}>Skip for now — take me to my dashboard</button>
         </div>
       </div>
     )
@@ -403,7 +405,7 @@ export default function Onboarding({ session }) {
             <button style={s.backBtn} onClick={handleBack}>← Back</button>
             <button style={s.primaryBtn} onClick={handleNext} disabled={loading}>Continue →</button>
           </div>
-          <button style={s.skipLink} onClick={handleSkip}>Skip — I'd rather not share this</button>
+          <button style={s.skipLink} onClick={handleExitSkip} disabled={loading}>Skip for now — take me to my dashboard</button>
         </div>
       </div>
     )
@@ -442,7 +444,7 @@ export default function Onboarding({ session }) {
             <button style={s.backBtn} onClick={handleBack}>← Back</button>
             <button style={s.primaryBtn} onClick={handleNext} disabled={loading}>Continue →</button>
           </div>
-          <button style={s.skipLink} onClick={handleSkip}>Skip this step</button>
+          <button style={s.skipLink} onClick={handleExitSkip} disabled={loading}>Skip for now — take me to my dashboard</button>
         </div>
       </div>
     )
@@ -514,7 +516,7 @@ export default function Onboarding({ session }) {
             <button style={s.backBtn} onClick={handleBack}>← Back</button>
             <button style={s.primaryBtn} onClick={handleNext} disabled={loading}>Continue →</button>
           </div>
-          <button style={s.skipLink} onClick={handleSkip}>Skip this step</button>
+          <button style={s.skipLink} onClick={handleExitSkip} disabled={loading}>Skip for now — take me to my dashboard</button>
         </div>
       </div>
     )
