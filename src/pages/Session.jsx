@@ -116,6 +116,14 @@ export default function Session({ session }) {
   const navigate = useNavigate()
   const [profile, setProfile] = useState(null)
   const [activeSection, setActiveSection] = useState('health')
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640)
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
+
   const [inputs, setInputs] = useState(() => {
     const o = {}
     SECTIONS.forEach(s => { o[s.id] = {}; s.fields.forEach(f => { o[s.id][f.id] = '' }) })
@@ -221,37 +229,37 @@ export default function Session({ session }) {
 
   const s = {
     page: { minHeight: '100vh', background: 'linear-gradient(160deg, #0d0f0a 0%, #111409 40%, #0a0d12 100%)' },
-    nav: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.2rem 2rem', borderBottom: '1px solid rgba(255,255,255,0.05)' },
-    navLogo: { fontFamily: "'Playfair Display',Georgia,serif", color: '#c8a97e', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' },
-    navBtn: { padding: '0.4rem 1rem', background: 'transparent', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '999px', color: '#5a5248', fontSize: '0.78rem', cursor: 'pointer' },
-    body: { maxWidth: '820px', margin: '0 auto', padding: '3rem 1.5rem 5rem' },
-    header: { textAlign: 'center', marginBottom: '2.5rem' },
-    title: { fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(1.6rem,4vw,2.2rem)', color: '#e8d5b0', marginBottom: '0.4rem' },
-    sub: { color: '#5a5248', fontSize: '0.88rem', fontStyle: 'italic' },
-    tabs: { display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '-1px', position: 'relative', zIndex: 2 },
-    tab: (active, color) => ({ padding: '0.5rem 0.9rem', borderRadius: '8px 8px 0 0', border: `1px solid ${active ? color + '50' : 'rgba(255,255,255,0.06)'}`, borderBottom: active ? '1px solid #0f120c' : '1px solid rgba(255,255,255,0.06)', background: active ? '#0f120c' : 'rgba(255,255,255,0.01)', color: active ? color : '#3a3428', cursor: 'pointer', fontSize: '0.78rem', fontFamily: "'Lora',Georgia,serif", transition: 'all 0.15s', display: 'flex', alignItems: 'center', gap: '0.3rem', position: 'relative', zIndex: active ? 3 : 1 }),
-    panel: (color) => ({ background: '#0f120c', border: `1px solid ${color}35`, borderRadius: '0 10px 10px 10px', padding: '1.5rem 1.5rem 0.8rem', marginBottom: '1.5rem', position: 'relative', zIndex: 1 }),
-    panelHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem', paddingBottom: '0.8rem', borderBottom: '1px solid rgba(255,255,255,0.05)' },
+    nav: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: isMobile ? '0.85rem 1rem' : '1.2rem 2rem', borderBottom: '1px solid rgba(255,255,255,0.05)' },
+    navLogo: { fontFamily: "'Cormorant Garamond',Georgia,serif", color: '#c8a97e', fontSize: isMobile ? '0.95rem' : '1.1rem', display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', letterSpacing: '0.02em' },
+    navMM: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '26px', height: '26px', borderRadius: '50%', background: 'rgba(200,169,126,0.1)', border: '1px solid rgba(200,169,126,0.25)', fontSize: '0.6rem', fontWeight: 700, color: '#c8a97e', flexShrink: 0, fontFamily: "'Cormorant Garamond',Georgia,serif", letterSpacing: 0 },
+    navBtn: { padding: isMobile ? '0.35rem 0.6rem' : '0.4rem 1rem', background: 'transparent', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '999px', color: '#5a5248', fontSize: isMobile ? '0.72rem' : '0.78rem', cursor: 'pointer' },
+    body: { maxWidth: '820px', margin: '0 auto', padding: isMobile ? '1.5rem 1rem 3rem' : '3rem 1.5rem 5rem' },
+    header: { textAlign: 'center', marginBottom: isMobile ? '1.5rem' : '2.5rem' },
+    title: { fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(1.4rem,4vw,2.2rem)', color: '#e8d5b0', marginBottom: '0.4rem' },
+    sub: { color: '#5a5248', fontSize: isMobile ? '0.82rem' : '0.88rem', fontStyle: 'italic' },
+    tab: (active, color) => ({ padding: isMobile ? '0.45rem 0.6rem' : '0.5rem 0.9rem', borderRadius: '8px 8px 0 0', border: `1px solid ${active ? color + '50' : 'rgba(255,255,255,0.06)'}`, borderBottom: active ? '1px solid #0f120c' : '1px solid rgba(255,255,255,0.06)', background: active ? '#0f120c' : 'rgba(255,255,255,0.01)', color: active ? color : '#3a3428', cursor: 'pointer', fontSize: isMobile ? '0.72rem' : '0.78rem', fontFamily: "'Lora',Georgia,serif", transition: 'all 0.15s', display: 'flex', alignItems: 'center', gap: '0.25rem', position: 'relative', zIndex: active ? 3 : 1, whiteSpace: 'nowrap', flexShrink: 0 }),
+    panel: (color) => ({ background: '#0f120c', border: `1px solid ${color}35`, borderRadius: isMobile ? '0 10px 10px 10px' : '0 10px 10px 10px', padding: isMobile ? '1rem 1rem 0.6rem' : '1.5rem 1.5rem 0.8rem', marginBottom: '1.5rem', position: 'relative', zIndex: 1 }),
+    panelHeader: { display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', gap: '0.3rem', marginBottom: '1.2rem', paddingBottom: '0.8rem', borderBottom: '1px solid rgba(255,255,255,0.05)' },
     label: { display: 'block', fontSize: '0.72rem', color: '#c8a97e', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.35rem' },
     textarea: { width: '100%', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px', padding: '0.7rem 0.9rem', color: '#c8bfb0', fontSize: '0.87rem', lineHeight: 1.7, resize: 'vertical', fontFamily: "'Lora',Georgia,serif", outline: 'none', boxSizing: 'border-box', marginBottom: '1rem' },
-    footer: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginTop: '0.5rem' },
+    footer: { display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'space-between' : 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.5rem' },
     progress: { display: 'flex', alignItems: 'center', gap: '0.35rem' },
     pip: (filled, color) => ({ width: filled ? '22px' : '7px', height: '4px', borderRadius: '2px', background: filled ? color : 'rgba(255,255,255,0.07)', transition: 'all 0.3s' }),
-    submitBtn: (enabled) => ({ padding: '0.75rem 2rem', background: enabled ? 'linear-gradient(135deg,#c8a97e,#a0845e)' : 'rgba(255,255,255,0.04)', border: 'none', borderRadius: '999px', color: enabled ? '#0d0f0a' : '#3a3428', fontFamily: "'Playfair Display',Georgia,serif", fontSize: '0.9rem', fontWeight: 600, cursor: enabled ? 'pointer' : 'not-allowed', transition: 'all 0.3s' }),
-    readingWrap: { background: 'rgba(200,169,126,0.025)', border: '1px solid rgba(200,169,126,0.1)', borderRadius: '14px', padding: '2rem', marginTop: '2.5rem' },
-    readingHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' },
+    submitBtn: (enabled) => ({ padding: isMobile ? '0.7rem 1.5rem' : '0.75rem 2rem', background: enabled ? 'linear-gradient(135deg,#c8a97e,#a0845e)' : 'rgba(255,255,255,0.04)', border: 'none', borderRadius: '999px', color: enabled ? '#0d0f0a' : '#3a3428', fontFamily: "'Playfair Display',Georgia,serif", fontSize: '0.9rem', fontWeight: 600, cursor: enabled ? 'pointer' : 'not-allowed', transition: 'all 0.3s' }),
+    readingWrap: { background: 'rgba(200,169,126,0.025)', border: '1px solid rgba(200,169,126,0.1)', borderRadius: '14px', padding: isMobile ? '1.2rem 1rem' : '2rem', marginTop: '2.5rem' },
+    readingHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' },
     saveBtn: (saved) => ({ padding: '0.4rem 1.1rem', background: saved ? 'rgba(168,196,162,0.15)' : 'linear-gradient(135deg,#c8a97e,#a0845e)', border: saved ? '1px solid rgba(168,196,162,0.3)' : 'none', borderRadius: '999px', color: saved ? '#a8c4a2' : '#0d0f0a', fontSize: '0.78rem', fontFamily: "'Playfair Display',Georgia,serif", fontWeight: 600, cursor: saved ? 'default' : 'pointer' }),
     followWrap: { marginTop: '2rem' },
     followDivider: { width: '100%', height: '1px', background: 'linear-gradient(90deg,transparent,rgba(200,169,126,0.2),transparent)', marginBottom: '1.5rem' },
-    followInput: { display: 'flex', gap: '0.7rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '999px', padding: '0.4rem 0.4rem 0.4rem 1.2rem' },
+    followInput: { display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '999px', padding: '0.4rem 0.4rem 0.4rem 1rem' },
     followQ: { color: '#7a7060', fontStyle: 'italic', fontSize: '0.88rem', marginBottom: '0.5rem' },
-    followA: { background: 'rgba(200,169,126,0.025)', border: '1px solid rgba(200,169,126,0.08)', borderRadius: '10px', padding: '1.2rem 1.4rem', marginBottom: '1.5rem' },
+    followA: { background: 'rgba(200,169,126,0.025)', border: '1px solid rgba(200,169,126,0.08)', borderRadius: '10px', padding: isMobile ? '1rem' : '1.2rem 1.4rem', marginBottom: '1.5rem' },
   }
 
   return (
     <div style={s.page}>
       <nav style={s.nav}>
-        <div style={s.navLogo} onClick={() => navigate('/dashboard')}>⟡ Sage</div>
+        <div style={s.navLogo} onClick={() => navigate('/dashboard')}><span style={s.navMM}>MM</span>Mystic Madman</div>
         <button style={s.navBtn} onClick={() => navigate('/dashboard')}>← Dashboard</button>
       </nav>
 
@@ -261,7 +269,7 @@ export default function Session({ session }) {
           <p style={s.sub}>Share what is alive in you — the more you offer, the deeper the guidance</p>
         </div>
 
-        <div style={s.tabs}>
+        <div className="sage-tabs">
           {SECTIONS.map(sec => (
             <button key={sec.id} style={s.tab(activeSection === sec.id, sec.color)} onClick={() => setActiveSection(sec.id)}>
               {sec.icon} {sec.label}

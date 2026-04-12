@@ -2,27 +2,6 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../supabase'
 import { useNavigate } from 'react-router-dom'
 
-const s = {
-  page: { minHeight: '100vh', background: 'linear-gradient(160deg, #0d0f0a 0%, #111409 40%, #0a0d12 100%)', padding: '3rem 1.5rem' },
-  wrap: { maxWidth: '580px', margin: '0 auto' },
-  header: { textAlign: 'center', marginBottom: '2.5rem' },
-  symbol: { fontSize: '2rem', marginBottom: '0.4rem' },
-  title: { fontFamily: "'Playfair Display',Georgia,serif", fontSize: '2rem', fontWeight: 700, color: '#e8d5b0', margin: '0 0 0.3rem' },
-  subtitle: { fontSize: '0.8rem', color: '#5a5248', letterSpacing: '0.15em', textTransform: 'uppercase' },
-  divider: { width: '50px', height: '1px', background: 'linear-gradient(90deg,transparent,#c8a97e,transparent)', margin: '1rem auto 0' },
-  section: { marginBottom: '2rem' },
-  sectionTitle: { fontFamily: "'Playfair Display',Georgia,serif", fontSize: '1rem', color: '#c8a97e', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(200,169,126,0.15)' },
-  row: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' },
-  field: { marginBottom: '1rem' },
-  label: { display: 'block', fontSize: '0.72rem', color: '#c8a97e', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.4rem' },
-  input: { width: '100%', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '0.7rem 0.9rem', color: '#e8d5b0', fontSize: '0.88rem', outline: 'none', boxSizing: 'border-box' },
-  btn: { width: '100%', padding: '0.85rem', background: 'linear-gradient(135deg,#c8a97e,#a0845e)', border: 'none', borderRadius: '999px', color: '#0d0f0a', fontFamily: "'Playfair Display',Georgia,serif", fontSize: '0.95rem', fontWeight: 700, marginTop: '0.5rem' },
-  skip: { width: '100%', padding: '0.7rem', background: 'transparent', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '999px', color: '#3a3428', fontSize: '0.82rem', marginTop: '0.75rem' },
-  success: { background: 'rgba(168,196,162,0.1)', border: '1px solid rgba(168,196,162,0.2)', borderRadius: '8px', padding: '0.75rem 1rem', color: '#a8c4a2', fontSize: '0.85rem', marginBottom: '1rem' },
-  error: { background: 'rgba(212,100,100,0.1)', border: '1px solid rgba(212,100,100,0.2)', borderRadius: '8px', padding: '0.75rem 1rem', color: '#d47070', fontSize: '0.85rem', marginBottom: '1rem' },
-  hint: { fontSize: '0.75rem', color: '#3a3428', fontStyle: 'italic', marginTop: '0.3rem' },
-}
-
 const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces','Unknown']
 
 export default function Profile({ session }) {
@@ -32,6 +11,39 @@ export default function Profile({ session }) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640)
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
+
+  const s = {
+    page: { minHeight: '100vh', background: 'linear-gradient(160deg, #0d0f0a 0%, #111409 40%, #0a0d12 100%)' },
+    nav: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: isMobile ? '0.85rem 1rem' : '1.2rem 2rem', borderBottom: '1px solid rgba(255,255,255,0.05)' },
+    navLogo: { fontFamily: "'Cormorant Garamond',Georgia,serif", color: '#c8a97e', fontSize: isMobile ? '0.95rem' : '1.1rem', display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', letterSpacing: '0.02em' },
+    navMM: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '26px', height: '26px', borderRadius: '50%', background: 'rgba(200,169,126,0.1)', border: '1px solid rgba(200,169,126,0.25)', fontSize: '0.6rem', fontWeight: 700, color: '#c8a97e', flexShrink: 0, fontFamily: "'Cormorant Garamond',Georgia,serif", letterSpacing: 0 },
+    navBtn: { padding: isMobile ? '0.35rem 0.6rem' : '0.4rem 1rem', background: 'transparent', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '999px', color: '#5a5248', fontSize: isMobile ? '0.72rem' : '0.78rem', cursor: 'pointer' },
+    body: { padding: isMobile ? '1.5rem 1rem' : '3rem 1.5rem' },
+    wrap: { maxWidth: '580px', margin: '0 auto' },
+    header: { textAlign: 'center', marginBottom: isMobile ? '1.5rem' : '2.5rem' },
+    symbol: { fontSize: '2rem', marginBottom: '0.4rem' },
+    title: { fontFamily: "'Playfair Display',Georgia,serif", fontSize: isMobile ? '1.6rem' : '2rem', fontWeight: 700, color: '#e8d5b0', margin: '0 0 0.3rem' },
+    subtitle: { fontSize: '0.8rem', color: '#5a5248', letterSpacing: '0.15em', textTransform: 'uppercase' },
+    divider: { width: '50px', height: '1px', background: 'linear-gradient(90deg,transparent,#c8a97e,transparent)', margin: '1rem auto 0' },
+    section: { marginBottom: '2rem' },
+    sectionTitle: { fontFamily: "'Playfair Display',Georgia,serif", fontSize: '1rem', color: '#c8a97e', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(200,169,126,0.15)' },
+    row: { display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem' },
+    field: { marginBottom: '1rem' },
+    label: { display: 'block', fontSize: '0.72rem', color: '#c8a97e', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.4rem' },
+    input: { width: '100%', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '0.7rem 0.9rem', color: '#e8d5b0', fontSize: '0.88rem', outline: 'none', boxSizing: 'border-box' },
+    btn: { width: '100%', padding: '0.85rem', background: 'linear-gradient(135deg,#c8a97e,#a0845e)', border: 'none', borderRadius: '999px', color: '#0d0f0a', fontFamily: "'Playfair Display',Georgia,serif", fontSize: '0.95rem', fontWeight: 700, marginTop: '0.5rem' },
+    skip: { width: '100%', padding: '0.7rem', background: 'transparent', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '999px', color: '#3a3428', fontSize: '0.82rem', marginTop: '0.75rem' },
+    success: { background: 'rgba(168,196,162,0.1)', border: '1px solid rgba(168,196,162,0.2)', borderRadius: '8px', padding: '0.75rem 1rem', color: '#a8c4a2', fontSize: '0.85rem', marginBottom: '1rem' },
+    error: { background: 'rgba(212,100,100,0.1)', border: '1px solid rgba(212,100,100,0.2)', borderRadius: '8px', padding: '0.75rem 1rem', color: '#d47070', fontSize: '0.85rem', marginBottom: '1rem' },
+    hint: { fontSize: '0.75rem', color: '#3a3428', fontStyle: 'italic', marginTop: '0.3rem' },
+  }
 
   useEffect(() => {
     const load = async () => {
@@ -53,15 +65,25 @@ export default function Profile({ session }) {
     setSaving(false)
   }
 
-  if (loading) return <div style={{ ...s.page, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div style={{ color: '#c8a97e', fontSize: '2rem' }}>⟡</div></div>
+  if (loading) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#0d0f0a' }}>
+      <div style={{ color: '#c8a97e', fontSize: '2rem', fontFamily: "'Cormorant Garamond',Georgia,serif", fontWeight: 700 }}>MM</div>
+    </div>
+  )
 
   return (
     <div style={s.page}>
+      <nav style={s.nav}>
+        <div style={s.navLogo} onClick={() => navigate('/dashboard')}>
+          <span style={s.navMM}>MM</span>Mystic Madman
+        </div>
+        <button style={s.navBtn} onClick={() => navigate('/dashboard')}>← Dashboard</button>
+      </nav>
+      <div style={s.body}>
       <div style={s.wrap}>
         <div style={s.header}>
-          <div style={s.symbol}>⟡</div>
           <h1 style={s.title}>Your Profile</h1>
-          <p style={s.subtitle}>Sage remembers this so you never have to re-enter it</p>
+          <p style={s.subtitle}>Mystic Madman remembers this so you never have to re-enter it</p>
           <div style={s.divider} />
         </div>
 
@@ -121,6 +143,7 @@ export default function Profile({ session }) {
         <button style={s.skip} onClick={() => navigate('/dashboard')}>
           Skip for now
         </button>
+      </div>
       </div>
     </div>
   )
