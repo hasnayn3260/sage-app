@@ -33,3 +33,12 @@ html, body { overflow-x: hidden; }
 @media (min-width: 641px) {
   .sage-tabs { flex-wrap: wrap; overflow-x: visible; }
 }
+
+/* ── Fade-in animation for revealed sections ─────── */
+.sage-fade-in {
+  animation: sageFadeIn 0.35s ease forwards;
+}
+@keyframes sageFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

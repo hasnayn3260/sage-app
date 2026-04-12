@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { supabase } from './supabase'
 import Landing from './pages/Landing'
 import Auth from './pages/Auth'
+import Onboarding from './pages/Onboarding'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import Session from './pages/Session'
@@ -32,6 +33,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={!session ? <Landing /> : <Navigate to="/dashboard" />} />
       <Route path="/auth" element={!session ? <Auth /> : <Navigate to="/dashboard" />} />
+      <Route path="/onboarding" element={session ? <Onboarding session={session} /> : <Navigate to="/" />} />
       <Route path="/dashboard" element={session ? <Dashboard session={session} /> : <Navigate to="/" />} />
       <Route path="/profile" element={session ? <Profile session={session} /> : <Navigate to="/" />} />
       <Route path="/session" element={session ? <Session session={session} /> : <Navigate to="/" />} />
