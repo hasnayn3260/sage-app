@@ -4,11 +4,12 @@ import { supabase } from '../supabase'
 import {
   SPIRITUAL_ORIENTATIONS, TRADITION_REVEAL, TRADITIONS_T1, TRADITIONS_T2,
   ESOTERIC_OPENNESS, PURPOSE_VIEWS, CHANGE_APPROACHES, DECISION_TRUSTS, PILLARS,
-  labelFor,
+  GENDERS, labelFor,
 } from './onboardingConfig'
 
 const EMPTY_CONFIG = {
-  full_name: '', date_of_birth: '', birth_place: '', preferred_name: '',
+  full_name: '', current_name: '', date_of_birth: '', time_of_birth: '',
+  birth_place: '', preferred_name: '', gender: '',
   spiritual_orientation: '', tradition_tier1: '', tradition_tier2: '', esoteric_openness: '',
   purpose_view: '', change_approach: '', decision_trust: '',
   pillars: [],
@@ -282,14 +283,22 @@ export default function Profile({ session }) {
         {/* Identity panel */}
         <Panel id="identity" icon="🌿" title="Identity"
           summary={identitySummary}
-          fields={['full_name', 'date_of_birth', 'birth_place', 'preferred_name']}>
+          fields={['full_name', 'current_name', 'date_of_birth', 'time_of_birth', 'birth_place', 'preferred_name', 'gender']}>
           <div style={s.field}>
             <label style={s.label}>Full birth name</label>
             <input style={s.input} value={config.full_name} onChange={e => set('full_name', e.target.value)} placeholder="Your full birth name" />
           </div>
           <div style={s.field}>
+            <label style={s.label}>Current name</label>
+            <input style={s.input} value={config.current_name} onChange={e => set('current_name', e.target.value)} placeholder="The name you go by today" />
+          </div>
+          <div style={s.field}>
             <label style={s.label}>Date of birth</label>
             <input style={s.input} type="date" value={config.date_of_birth || ''} onChange={e => set('date_of_birth', e.target.value)} />
+          </div>
+          <div style={s.field}>
+            <label style={s.label}>Time of Birth</label>
+            <input style={s.input} type="time" value={config.time_of_birth || ''} onChange={e => set('time_of_birth', e.target.value)} />
           </div>
           <div style={s.field}>
             <label style={s.label}>Place of birth</label>
@@ -298,6 +307,19 @@ export default function Profile({ session }) {
           <div style={s.field}>
             <label style={s.label}>How you like to be addressed</label>
             <input style={s.input} value={config.preferred_name} onChange={e => set('preferred_name', e.target.value)} placeholder="What should Sage call you?" />
+          </div>
+          <div style={s.field}>
+            <label style={s.label}>Gender</label>
+            <div style={s.pillRow}>
+              {GENDERS.map(g => {
+                const selected = config.gender === g.id
+                return (
+                  <button key={g.id} type="button" style={s.pill(selected)} onClick={() => set('gender', selected ? '' : g.id)}>
+                    {g.title}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </Panel>
 

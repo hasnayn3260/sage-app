@@ -81,6 +81,13 @@ export const DECISION_TRUSTS = [
   { id: 'combination', title: 'A combination of all', desc: 'Drawing on all three' },
 ]
 
+// ── Gender ──────────────────────────────────────────
+export const GENDERS = [
+  { id: 'male', title: 'Male' },
+  { id: 'female', title: 'Female' },
+  { id: 'other', title: 'Other / Prefer not to specify' },
+]
+
 // ── Life Pillars ────────────────────────────────────
 export const PILLARS = [
   { id: 'love', icon: '❤️', title: 'Love & Deep Connection' },

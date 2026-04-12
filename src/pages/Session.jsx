@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabase'
 import {
   SPIRITUAL_ORIENTATIONS, TRADITIONS_T1, ESOTERIC_OPENNESS,
-  PURPOSE_VIEWS, CHANGE_APPROACHES, DECISION_TRUSTS, PILLARS, labelFor,
+  PURPOSE_VIEWS, CHANGE_APPROACHES, DECISION_TRUSTS, PILLARS,
+  GENDERS, labelFor,
 } from './onboardingConfig'
 
 // ── System Prompt ──────────────────────────────────────
@@ -238,9 +239,12 @@ export default function Session({ session }) {
     const dob = userConfig?.date_of_birth || profile?.date_of_birth
     const birthPlace = userConfig?.birth_place || profile?.birth_place
     if (userConfig?.preferred_name) idParts.push(`Preferred name: ${userConfig.preferred_name}`)
-    if (fullName) idParts.push(`Full name: ${fullName}`)
+    if (fullName) idParts.push(`Full birth name: ${fullName}`)
+    if (userConfig?.current_name) idParts.push(`Current name: ${userConfig.current_name}`)
     if (dob) idParts.push(`Date of birth: ${dob}`)
+    if (userConfig?.time_of_birth) idParts.push(`Time of birth: ${userConfig.time_of_birth}`)
     if (birthPlace) idParts.push(`Birth place: ${birthPlace}`)
+    if (userConfig?.gender) idParts.push(`Gender: ${labelFor(GENDERS, userConfig.gender)}`)
     if (profile?.sun_sign) idParts.push(`Sun: ${profile.sun_sign}`)
     if (profile?.moon_sign) idParts.push(`Moon: ${profile.moon_sign}`)
     if (profile?.rising_sign) idParts.push(`Rising: ${profile.rising_sign}`)
@@ -322,16 +326,20 @@ export default function Session({ session }) {
         if (profile?.moon_sign) parts.push(`Moon ${profile.moon_sign}`)
         if (profile?.rising_sign) parts.push(`Rising ${profile.rising_sign}`)
         const dobVal = userConfig?.date_of_birth || profile?.date_of_birth
+        const tobVal = userConfig?.time_of_birth
         const placeVal = userConfig?.birth_place || profile?.birth_place
         if (dobVal) parts.push(`DOB ${dobVal}`)
+        if (tobVal) parts.push(`Time ${tobVal}`)
         if (placeVal) parts.push(`Born ${placeVal}`)
         if (parts.length) lensCtx += `*Chart data: ${parts.join(', ')}*\n`
       }
       if (lens.id === 'numerology') {
         const parts = []
-        const nameVal = userConfig?.full_name || profile?.full_name
+        const birthName = userConfig?.full_name || profile?.full_name
+        const currentName = userConfig?.current_name
         const dobVal = userConfig?.date_of_birth || profile?.date_of_birth
-        if (nameVal) parts.push(`Full Name: ${nameVal}`)
+        if (birthName) parts.push(`Full birth name: ${birthName}`)
+        if (currentName) parts.push(`Current name: ${currentName}`)
         if (dobVal) parts.push(`DOB: ${dobVal}`)
         if (parts.length) lensCtx += `*From profile: ${parts.join(', ')} — use these to calculate Life Path and interpret numerological cycles.*\n`
       }

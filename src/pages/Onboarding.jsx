@@ -4,6 +4,7 @@ import { supabase } from '../supabase'
 import {
   SPIRITUAL_ORIENTATIONS, TRADITION_REVEAL, TRADITIONS_T1, TRADITIONS_T2,
   ESOTERIC_OPENNESS, PURPOSE_VIEWS, CHANGE_APPROACHES, DECISION_TRUSTS, PILLARS,
+  GENDERS,
 } from './onboardingConfig'
 
 // ── MM Monogram ─────────────────────────────────────
@@ -68,7 +69,8 @@ export default function Onboarding({ session }) {
   const [loading, setLoading] = useState(false)
   const [transitioning, setTransitioning] = useState(false)
   const [config, setConfig] = useState({
-    full_name: '', date_of_birth: '', birth_place: '', preferred_name: '',
+    full_name: '', current_name: '', date_of_birth: '', time_of_birth: '',
+    birth_place: '', preferred_name: '', gender: '',
     spiritual_orientation: '', tradition_tier1: '', tradition_tier2: '', esoteric_openness: '',
     purpose_view: '', change_approach: '', decision_trust: '',
     pillars: [],
@@ -284,7 +286,7 @@ export default function Onboarding({ session }) {
         <div style={s.body}>
           <div style={s.stepHead}>
             <h1 style={s.stepTitle}>Who are you?</h1>
-            <p style={s.stepSub}>The basics — used for numerological and astrological calculations</p>
+            <p style={s.stepSub}>The basics used for gaining a deeper understanding as to life path</p>
           </div>
 
           <div style={s.field}>
@@ -294,8 +296,20 @@ export default function Onboarding({ session }) {
           </div>
 
           <div style={s.field}>
+            <label style={s.label}>Current name</label>
+            <input style={s.input} value={config.current_name} onChange={e => set('current_name', e.target.value)} placeholder="The name you go by today" />
+            <p style={s.hint}>The name you go by today, if different from your birth name</p>
+          </div>
+
+          <div style={s.field}>
             <label style={s.label}>Date of birth</label>
             <input style={s.input} type="date" value={config.date_of_birth || ''} onChange={e => set('date_of_birth', e.target.value)} />
+          </div>
+
+          <div style={s.field}>
+            <label style={s.label}>Time of Birth</label>
+            <input style={s.input} type="time" value={config.time_of_birth || ''} onChange={e => set('time_of_birth', e.target.value)} />
+            <p style={s.hint}>As accurate as possible — used for astrological rising sign calculation. Check your birth certificate if unsure.</p>
           </div>
 
           <div style={s.field}>
@@ -308,6 +322,20 @@ export default function Onboarding({ session }) {
             <label style={s.label}>How you like to be addressed</label>
             <input style={s.input} value={config.preferred_name} onChange={e => set('preferred_name', e.target.value)} placeholder="What should Sage call you?" />
             <p style={s.hint}>What should Sage call you?</p>
+          </div>
+
+          <div style={s.field}>
+            <label style={s.label}>Gender</label>
+            <div style={s.pillRow}>
+              {GENDERS.map(g => {
+                const selected = config.gender === g.id
+                return (
+                  <button key={g.id} type="button" style={s.pill(selected)} onClick={() => set('gender', selected ? '' : g.id)}>
+                    {g.title}
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           <div style={s.navBar}>
