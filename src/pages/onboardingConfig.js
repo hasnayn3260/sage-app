@@ -104,3 +104,28 @@ export const PILLARS = [
 
 // ── Label lookups (for Profile summary views) ──────
 export const labelFor = (list, id) => list.find(x => x.id === id)?.title || ''
+
+// ── DB sanitisation ────────────────────────────────
+// Postgres rejects empty strings on DATE/TIME/typed columns. Convert
+// '' and undefined to null before upserting. Arrays pass through.
+export const sanitizeForDB = (config) => {
+  const out = {}
+  for (const [k, v] of Object.entries(config)) {
+    if (v === '' || v === undefined) out[k] = null
+    else out[k] = v
+  }
+  return out
+}
+
+// Normalise a row read from the DB back into form-safe values
+// (null → '' for scalars, null → [] for pillars) so <input>s stay
+// controlled.
+export const normalizeFromDB = (data) => {
+  const out = {}
+  for (const [k, v] of Object.entries(data)) {
+    if (k === 'pillars') out[k] = v || []
+    else if (v === null) out[k] = ''
+    else out[k] = v
+  }
+  return out
+}

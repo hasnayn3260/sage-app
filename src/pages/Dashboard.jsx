@@ -21,21 +21,23 @@ export default function Dashboard({ session }) {
 
   useEffect(() => {
     const load = async () => {
-      const [{ data: config }, { data: sess }] = await Promise.all([
+      console.log('[Dashboard] loading for user:', session.user.id)
+      const [{ data: config, error: configError }, { data: sess, error: sessError }] = await Promise.all([
         supabase.from('user_configuration').select('*').eq('user_id', session.user.id).maybeSingle(),
         supabase.from('sessions').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false }).limit(5),
       ])
-      if (!config) {
-        navigate('/onboarding', { replace: true })
-        return
-      }
-      setUserConfig(config)
+      console.log('[Dashboard] config:', { config, configError })
+      console.log('[Dashboard] sessions:', { count: sess?.length, sessError })
+      // NOTE: we intentionally do NOT redirect to /onboarding here — the
+      // banner below invites the user in a non-intrusive way when the
+      // record is missing or was skipped.
+      setUserConfig(config || null)
       setConfigChecked(true)
       setSessions(sess || [])
       setLoading(false)
     }
     load()
-  }, [session, navigate])
+  }, [session])
 
   const dismissBanner = () => {
     sessionStorage.setItem(BANNER_DISMISS_KEY, '1')
@@ -47,7 +49,11 @@ export default function Dashboard({ session }) {
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
   const formatDate = (d) => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 
-  const showOnboardingBanner = userConfig?.onboarding_skipped === true && !bannerDismissed
+  // Show banner if user has no config at all, or they skipped and
+  // haven't completed the onboarding yet (and haven't dismissed this session)
+  const showOnboardingBanner = !bannerDismissed && (
+    !userConfig || userConfig.onboarding_skipped === true
+  )
 
   const s = {
     page: { minHeight: '100vh', background: '#0a0805', color: '#e8dfc8' },

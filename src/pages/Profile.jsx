@@ -4,7 +4,7 @@ import { supabase } from '../supabase'
 import {
   SPIRITUAL_ORIENTATIONS, TRADITION_REVEAL, TRADITIONS_T1, TRADITIONS_T2,
   ESOTERIC_OPENNESS, PURPOSE_VIEWS, CHANGE_APPROACHES, DECISION_TRUSTS, PILLARS,
-  GENDERS, labelFor,
+  GENDERS, labelFor, sanitizeForDB, normalizeFromDB,
 } from './onboardingConfig'
 
 const EMPTY_CONFIG = {
@@ -46,7 +46,7 @@ export default function Profile({ session }) {
   useEffect(() => {
     const load = async () => {
       const { data } = await supabase.from('user_configuration').select('*').eq('user_id', session.user.id).maybeSingle()
-      if (data) setConfig({ ...EMPTY_CONFIG, ...data, pillars: data.pillars || [] })
+      if (data) setConfig({ ...EMPTY_CONFIG, ...normalizeFromDB(data) })
       setLoading(false)
     }
     load()
@@ -57,12 +57,16 @@ export default function Profile({ session }) {
   const saveSection = async (sectionId, fields) => {
     setSavingPanel(sectionId)
     setPanelMessage('')
-    const patch = { user_id: session.user.id }
-    fields.forEach(f => { patch[f] = config[f] })
+    const subset = {}
+    fields.forEach(f => { subset[f] = config[f] })
+    const patch = { ...sanitizeForDB(subset), user_id: session.user.id }
+    console.log('[Profile] saving section', sectionId, patch)
     const { error } = await supabase.from('user_configuration').upsert(patch)
     setSavingPanel(null)
-    if (error) setPanelMessage('Error saving — please try again')
-    else {
+    if (error) {
+      console.error('[Profile] save error:', error)
+      setPanelMessage('Error saving — please try again')
+    } else {
       setPanelMessage('Saved ✓')
       setTimeout(() => { setPanelMessage(''); setOpenPanel(null) }, 1200)
     }

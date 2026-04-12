@@ -4,7 +4,7 @@ import { supabase } from '../supabase'
 import {
   SPIRITUAL_ORIENTATIONS, TRADITION_REVEAL, TRADITIONS_T1, TRADITIONS_T2,
   ESOTERIC_OPENNESS, PURPOSE_VIEWS, CHANGE_APPROACHES, DECISION_TRUSTS, PILLARS,
-  GENDERS,
+  GENDERS, sanitizeForDB, normalizeFromDB,
 } from './onboardingConfig'
 
 // ── MM Monogram ─────────────────────────────────────
@@ -62,7 +62,7 @@ const cardStyle = (selected) => ({
 })
 
 // ── Main Component ──────────────────────────────────
-export default function Onboarding({ session }) {
+export default function Onboarding({ session, onConfigSaved }) {
   const navigate = useNavigate()
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640)
   const [step, setStep] = useState('welcome') // 'welcome' | 1-5 | 'complete'
@@ -87,21 +87,30 @@ export default function Onboarding({ session }) {
   // Load existing config if user returns to onboarding
   useEffect(() => {
     supabase.from('user_configuration').select('*').eq('user_id', session.user.id).maybeSingle()
-      .then(({ data }) => {
-        if (data) setConfig(prev => ({ ...prev, ...data, pillars: data.pillars || [] }))
+      .then(({ data, error }) => {
+        console.log('[Onboarding] load result:', { data, error })
+        if (data) setConfig(prev => ({ ...prev, ...normalizeFromDB(data) }))
       })
   }, [session])
 
   const set = (key, val) => setConfig(prev => ({ ...prev, [key]: val }))
 
+  const writeConfig = async (extra = {}, tag = 'write') => {
+    const payload = { ...sanitizeForDB(config), ...extra, user_id: session.user.id }
+    console.log(`[Onboarding] ${tag} upserting payload:`, payload)
+    const { data, error } = await supabase
+      .from('user_configuration')
+      .upsert(payload)
+      .select()
+    console.log(`[Onboarding] ${tag} upsert result:`, { data, error })
+    return { data, error }
+  }
+
   const savePartial = async (extra = {}) => {
     setLoading(true)
-    await supabase.from('user_configuration').upsert({
-      user_id: session.user.id,
-      ...config,
-      ...extra,
-    })
+    const { error } = await writeConfig(extra, 'savePartial')
     setLoading(false)
+    if (error) console.error('[Onboarding] savePartial failed:', error)
   }
 
   const goStep = (next) => {
@@ -116,16 +125,25 @@ export default function Onboarding({ session }) {
   const handleWelcomeBegin = () => goStep(1)
 
   // Unified exit: creates/updates a user_configuration record marked as
-  // skipped + completed so Dashboard stops redirecting to /onboarding.
-  // Preserves any partial data the user has entered so far.
+  // skipped so the app stops redirecting to /onboarding. Preserves any
+  // partial data the user has entered. Only navigates after the DB
+  // write is confirmed.
   const handleExitSkip = async () => {
+    console.log('[Onboarding] handleExitSkip clicked')
     setLoading(true)
-    await supabase.from('user_configuration').upsert({
-      user_id: session.user.id,
-      ...config,
-      onboarding_completed: true,
+    const { error } = await writeConfig({
+      onboarding_completed: false,
       onboarding_skipped: true,
-    })
+    }, 'handleExitSkip')
+    if (error) {
+      console.error('[Onboarding] SKIP FAILED — not navigating:', error)
+      alert('Could not save — please try again. Details in console.')
+      setLoading(false)
+      return
+    }
+    console.log('[Onboarding] skip saved, refreshing App config state')
+    if (onConfigSaved) await onConfigSaved()
+    console.log('[Onboarding] navigating to /dashboard')
     setLoading(false)
     navigate('/dashboard')
   }
@@ -142,14 +160,20 @@ export default function Onboarding({ session }) {
   }
 
   const handleComplete = async () => {
+    console.log('[Onboarding] handleComplete clicked')
     setLoading(true)
-    await supabase.from('user_configuration').upsert({
-      user_id: session.user.id,
-      ...config,
+    const { error } = await writeConfig({
       onboarding_completed: true,
       onboarding_skipped: false,
       completed_at: new Date().toISOString(),
-    })
+    }, 'handleComplete')
+    if (error) {
+      console.error('[Onboarding] COMPLETE FAILED — not advancing:', error)
+      alert('Could not save — please try again. Details in console.')
+      setLoading(false)
+      return
+    }
+    if (onConfigSaved) await onConfigSaved()
     setLoading(false)
     goStep('complete')
   }
