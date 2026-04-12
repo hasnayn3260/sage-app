@@ -47,7 +47,7 @@ export default function Readings({ session }) {
   }, [session])
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this reading? This cannot be undone.')) return
+    if (!window.confirm('Delete this session? This cannot be undone.')) return
     setDeleting(true)
     await supabase.from('sessions').delete().eq('id', id)
     setSessions(prev => prev.filter(s => s.id !== id))
@@ -105,22 +105,22 @@ export default function Readings({ session }) {
 
       <div style={s.body}>
         <div style={s.header}>
-          <h1 style={s.title}>Past Readings</h1>
+          <h1 style={s.title}>Past Sessions</h1>
           <p style={s.sub}>{sessions.length} {sessions.length === 1 ? 'session' : 'sessions'} saved</p>
         </div>
 
         {sessions.length === 0 ? (
           <div style={s.empty}>
-            <p style={s.emptyTitle}>No readings yet</p>
-            <p style={s.emptyText}>Begin your first session and save the reading to see it here</p>
+            <p style={s.emptyTitle}>No sessions yet</p>
+            <p style={s.emptyText}>Begin your first session and save it to see it here</p>
             <button style={s.newBtn} onClick={() => navigate('/session')}>Begin First Session →</button>
           </div>
         ) : isMobile ? (
           selected ? (
             <div>
-              <button style={s.backBtn} onClick={() => setSelected(null)}>← All Readings</button>
+              <button style={s.backBtn} onClick={() => setSelected(null)}>← All Sessions</button>
               <div style={s.reading}>
-                <div style={s.readingTitle}>{selected.title || 'Holistic Reading'}</div>
+                <div style={s.readingTitle}>{selected.title || 'Holistic Session'}</div>
                 <div style={s.readingDate}>{formatDate(selected.created_at)} at {formatTime(selected.created_at)}</div>
                 <MarkdownRenderer text={selected.reading} />
               </div>
@@ -129,7 +129,7 @@ export default function Readings({ session }) {
             <div style={s.list}>
               {sessions.map(sess => (
                 <div key={sess.id} style={s.card(false)} onClick={() => setSelected(sess)}>
-                  <div style={s.cardTitle}>{sess.title || 'Holistic Reading'}</div>
+                  <div style={s.cardTitle}>{sess.title || 'Holistic Session'}</div>
                   <div style={s.cardDate}>{formatDate(sess.created_at)}</div>
                   <div style={s.cardFooter}>
                     <span style={{ fontSize: '0.7rem', color: '#3a3428' }}>{formatTime(sess.created_at)}</span>
@@ -146,7 +146,7 @@ export default function Readings({ session }) {
                 <div key={sess.id} style={s.card(selected?.id === sess.id)} onClick={() => setSelected(sess)}
                   onMouseEnter={e => { if (selected?.id !== sess.id) e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)' }}
                   onMouseLeave={e => { if (selected?.id !== sess.id) e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)' }}>
-                  <div style={s.cardTitle}>{sess.title || 'Holistic Reading'}</div>
+                  <div style={s.cardTitle}>{sess.title || 'Holistic Session'}</div>
                   <div style={s.cardDate}>{formatDate(sess.created_at)}</div>
                   <div style={s.cardFooter}>
                     <span style={{ fontSize: '0.7rem', color: '#3a3428' }}>{formatTime(sess.created_at)}</span>
@@ -158,12 +158,12 @@ export default function Readings({ session }) {
 
             {selected ? (
               <div style={s.reading}>
-                <div style={s.readingTitle}>{selected.title || 'Holistic Reading'}</div>
+                <div style={s.readingTitle}>{selected.title || 'Holistic Session'}</div>
                 <div style={s.readingDate}>{formatDate(selected.created_at)} at {formatTime(selected.created_at)}</div>
                 <MarkdownRenderer text={selected.reading} />
               </div>
             ) : (
-              <div style={s.placeholder}>Select a reading to view it</div>
+              <div style={s.placeholder}>Select a session to view it</div>
             )}
           </div>
         )}

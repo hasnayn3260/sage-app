@@ -192,7 +192,7 @@ export default function Session({ session }) {
   const handleSave = async () => {
     if (!reading || saved) return
     setSaving(true)
-    const title = `Reading — ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`
+    const title = `Session — ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`
     await supabase.from('sessions').insert({ user_id: session.user.id, title, inputs, reading })
     setSaving(false)
     setSaved(true)
@@ -323,10 +323,10 @@ export default function Session({ session }) {
           <div style={s.readingWrap} ref={readingRef}>
             <div style={s.readingHeader}>
               <span style={{ fontFamily: "'Playfair Display',Georgia,serif", color: '#e8d5b0', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                ⟡ Sage's Reading
+                ⟡ Sage's Session
               </span>
               <button style={s.saveBtn(saved)} onClick={handleSave} disabled={saving || saved}>
-                {saved ? '✓ Saved' : saving ? 'Saving...' : 'Save Reading'}
+                {saved ? '✓ Saved' : saving ? 'Saving...' : 'Save Session'}
               </button>
             </div>
             <MarkdownRenderer text={reading} />

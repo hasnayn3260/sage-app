@@ -72,7 +72,7 @@ export default function Dashboard({ session }) {
       <nav style={s.nav}>
         <div style={s.navLogo}><span style={s.navMM}>MM</span>{isMobile ? 'Mystic Madman' : 'Mystic Madman'}</div>
         <div style={s.navRight}>
-          <button style={s.navBtn} onClick={() => navigate('/readings')}>{isMobile ? 'Readings' : 'Past Readings'}</button>
+          <button style={s.navBtn} onClick={() => navigate('/readings')}>{isMobile ? 'Sessions' : 'Past Sessions'}</button>
           <button style={s.navBtn} onClick={() => navigate('/profile')}>Profile</button>
           <button style={s.navBtn} onClick={() => supabase.auth.signOut()}>{isMobile ? 'Out' : 'Sign Out'}</button>
         </div>
@@ -84,15 +84,15 @@ export default function Dashboard({ session }) {
 
         {!profile?.full_name && (
           <div style={s.banner}>
-            <span style={s.bannerText}>✨ Complete your profile so Sage can personalise every reading</span>
+            <span style={s.bannerText}>✨ Complete your profile so Sage can personalise every session</span>
             <button style={s.bannerBtn} onClick={() => navigate('/profile')}>Set Up Profile →</button>
           </div>
         )}
 
         <div style={s.grid}>
           {[
-            { icon: '⟡', title: 'New Session', desc: 'Begin a full holistic reading across health, dreams, mind, astrology and numerology', action: () => navigate('/session') },
-            { icon: '📖', title: 'Past Readings', desc: 'Revisit your previous sessions and track your journey over time', action: () => navigate('/readings') },
+            { icon: '⟡', title: 'New Session', desc: 'Begin a full holistic session across health, dreams, mind, astrology and numerology', action: () => navigate('/session') },
+            { icon: '📖', title: 'Past Sessions', desc: 'Revisit your previous sessions and track your journey over time', action: () => navigate('/readings') },
             { icon: '👤', title: 'My Profile', desc: 'Update your birth details, astrology signs and personal information', action: () => navigate('/profile') },
           ].map(c => (
             <div key={c.title} style={s.card} onClick={c.action}
@@ -114,7 +114,7 @@ export default function Dashboard({ session }) {
 
         {sessions.length === 0 ? (
           <div style={s.empty}>
-            <p style={s.emptyText}>No sessions yet — begin your first reading above</p>
+            <p style={s.emptyText}>No sessions yet — begin your first session above</p>
           </div>
         ) : (
           sessions.map(sess => (
@@ -122,7 +122,7 @@ export default function Dashboard({ session }) {
               onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,169,126,0.15)'}
               onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}>
               <div>
-                <div style={s.sessionTitle}>{sess.title || 'Holistic Reading'}</div>
+                <div style={s.sessionTitle}>{sess.title || 'Holistic Session'}</div>
                 <div style={s.sessionDate}>{formatDate(sess.created_at)}</div>
               </div>
               <span style={{ color: '#3a3428', fontSize: '0.78rem' }}>View →</span>

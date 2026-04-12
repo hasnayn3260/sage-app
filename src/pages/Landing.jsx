@@ -284,7 +284,7 @@ export default function Landing() {
               onClick={() => navigate('/auth')}
               onMouseEnter={e => e.currentTarget.style.boxShadow = '0 6px 32px rgba(200,160,80,0.35)'}
               onMouseLeave={e => e.currentTarget.style.boxShadow = '0 4px 24px rgba(200,160,80,0.2)'}>
-              Begin your reading →
+              Begin your session →
             </button>
             <button style={s.ctaSecondary}
               onClick={scrollToDomains}
@@ -328,7 +328,7 @@ export default function Landing() {
       {/* ── Sample Reading ── */}
       <section style={s.sampleSection}>
         <p style={s.sectionEyebrow}>A glimpse inside</p>
-        <h2 style={{ ...s.sectionTitle, marginBottom: isMobile ? '1.5rem' : '2.5rem' }}>What a reading looks like</h2>
+        <h2 style={{ ...s.sectionTitle, marginBottom: isMobile ? '1.5rem' : '2.5rem' }}>What a session looks like</h2>
         <div style={s.sampleCard}>
           <div style={s.sampleH2}>🌿 Overall State of Being</div>
           <p style={s.sampleP}>
@@ -348,7 +348,7 @@ export default function Landing() {
           }} />
         </div>
         <p style={s.sampleCaption}>
-          Readings draw on everything you share — your body, your dreams, your chart, your numbers.
+          Sessions draw on everything you share — your body, your dreams, your chart, your numbers.
         </p>
       </section>
 
@@ -356,10 +356,10 @@ export default function Landing() {
 
       {/* ── Final CTA ── */}
       <section style={s.ctaSection}>
-        <p style={{ ...s.eyebrow, marginBottom: '1rem' }}>Your first reading is free</p>
-        <h2 style={s.ctaTitle}>Begin your first reading</h2>
+        <p style={{ ...s.eyebrow, marginBottom: '1rem' }}>Your first session is free</p>
+        <h2 style={s.ctaTitle}>Begin your first session</h2>
         <p style={s.ctaSub}>
-          No commitment. No algorithm. Just a reading that sees you whole.
+          No commitment. No algorithm. Just a session that sees you whole.
         </p>
         <button style={s.ctaFinalBtn}
           onClick={() => navigate('/auth')}
