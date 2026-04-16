@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabase'
+import AppShell from '../components/AppShell'
+import { ChevronDownIcon } from '../components/Icons'
 import {
   SPIRITUAL_ORIENTATIONS, TRADITION_REVEAL, TRADITIONS_T1, TRADITIONS_T2,
   ESOTERIC_OPENNESS, PURPOSE_VIEWS, CHANGE_APPROACHES, DECISION_TRUSTS, PILLARS,
@@ -89,25 +91,14 @@ export default function Profile({ session }) {
 
   // ── Styles ──────────────────────────────────────
   const s = {
-    page: { minHeight: '100vh', background: '#0a0805', color: '#e8dfc8' },
-    nav: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: isMobile ? '0.85rem 1rem' : '1.1rem 2rem', borderBottom: '1px solid rgba(200,160,80,0.07)', position: 'sticky', top: 0, background: 'rgba(10,8,5,0.92)', backdropFilter: 'blur(12px)', zIndex: 100 },
-    navLogo: { fontFamily: "'Cormorant Garamond',Georgia,serif", color: '#c8a050', fontSize: isMobile ? '0.95rem' : '1.05rem', display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', letterSpacing: '0.02em' },
-    navMM: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '26px', height: '26px', borderRadius: '50%', background: 'rgba(200,160,80,0.1)', border: '1px solid rgba(200,160,80,0.25)', fontSize: '0.6rem', fontWeight: 700, color: '#c8a050', fontFamily: "'Cormorant Garamond',Georgia,serif", flexShrink: 0 },
-    navBtn: { padding: isMobile ? '0.35rem 0.6rem' : '0.4rem 1rem', background: 'transparent', border: '1px solid rgba(200,160,80,0.15)', borderRadius: '999px', color: '#7a6e5e', fontSize: isMobile ? '0.72rem' : '0.78rem', cursor: 'pointer', fontFamily: "'Lora',Georgia,serif" },
-
-    body: { maxWidth: '720px', margin: '0 auto', padding: isMobile ? '1.5rem 1rem 4rem' : '2.5rem 1.5rem 5rem' },
-    header: { textAlign: 'center', marginBottom: '2rem' },
-    title: { fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: isMobile ? 'clamp(1.7rem,5vw,2rem)' : 'clamp(2rem,4vw,2.4rem)', fontWeight: 500, color: '#e8dfc8', marginBottom: '0.3rem' },
-    subtitle: { fontSize: '0.82rem', color: '#7a6e5e', fontStyle: 'italic', fontFamily: "'Lora',Georgia,serif" },
-
     panel: (open) => ({
-      background: open ? 'rgba(200,160,80,0.03)' : 'rgba(255,255,255,0.018)',
-      border: `1px solid ${open ? 'rgba(200,160,80,0.22)' : 'rgba(255,255,255,0.06)'}`,
+      background: open ? '#231e14' : '#1c1610',
+      border: `1px solid ${open ? 'rgba(200,160,80,0.25)' : 'rgba(255,255,255,0.06)'}`,
       borderRadius: '12px', marginBottom: '0.7rem', overflow: 'hidden',
       transition: 'all 0.2s',
     }),
     panelHead: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: isMobile ? '1rem 1.1rem' : '1.1rem 1.4rem', cursor: 'pointer' },
-    panelTitle: { display: 'flex', alignItems: 'center', gap: '0.7rem', fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: isMobile ? '1rem' : '1.08rem', color: '#e8dfc8', fontWeight: 600 },
+    panelTitle: { display: 'flex', alignItems: 'center', gap: '0.7rem', fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: isMobile ? '1rem' : '1.08rem', color: '#f0e6c8', fontWeight: 600 },
     panelIcon: { fontSize: '1.1rem', lineHeight: 1 },
     panelEdit: { fontSize: '0.74rem', color: '#9a7830', fontFamily: "'Lora',Georgia,serif", letterSpacing: '0.06em', textTransform: 'uppercase' },
     panelBody: { padding: isMobile ? '0 1.1rem 1.2rem' : '0 1.4rem 1.5rem', borderTop: '1px solid rgba(200,160,80,0.08)', paddingTop: '1.2rem' },
@@ -117,8 +108,8 @@ export default function Profile({ session }) {
     // Fields
     field: { marginBottom: '1.1rem' },
     label: { display: 'block', fontSize: '0.71rem', color: '#9a7830', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '0.5rem', fontFamily: "'Lora',Georgia,serif" },
-    input: { width: '100%', background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(200,160,80,0.12)', borderRadius: '8px', padding: '0.75rem 0.95rem', color: '#e8dfc8', fontSize: '0.9rem', outline: 'none', fontFamily: "'Lora',Georgia,serif", boxSizing: 'border-box' },
-    textarea: { width: '100%', background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(200,160,80,0.12)', borderRadius: '10px', padding: '0.85rem 0.95rem', color: '#e8dfc8', fontSize: '0.9rem', lineHeight: 1.75, outline: 'none', fontFamily: "'Lora',Georgia,serif", boxSizing: 'border-box', resize: 'vertical', minHeight: '100px' },
+    input: { width: '100%', background: '#1c1610', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', padding: '0.75rem 0.95rem', color: '#f0e6c8', fontSize: '0.9rem', outline: 'none', fontFamily: "'Lora',Georgia,serif", boxSizing: 'border-box', transition: 'border-color 0.2s' },
+    textarea: { width: '100%', background: '#1c1610', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px', padding: '0.85rem 0.95rem', color: '#f0e6c8', fontSize: '0.9rem', lineHeight: 1.75, outline: 'none', fontFamily: "'Lora',Georgia,serif", boxSizing: 'border-box', resize: 'vertical', minHeight: '100px', transition: 'border-color 0.2s' },
     select: { width: '100%', background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(200,160,80,0.12)', borderRadius: '8px', padding: '0.72rem 1rem', color: '#e8dfc8', fontSize: '0.88rem', outline: 'none', fontFamily: "'Lora',Georgia,serif", boxSizing: 'border-box', appearance: 'none', backgroundImage: "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3e%3cpath d='M1 1l5 5 5-5' stroke='%239a7830' stroke-width='1.5' fill='none'/%3e%3c/svg%3e\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', paddingRight: '2.5rem' },
 
     questionBlock: { marginBottom: '1.5rem' },
@@ -163,9 +154,12 @@ export default function Profile({ session }) {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#0a0805' }}>
-        <div style={{ fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: '1.5rem', fontWeight: 700, color: '#c8a050' }}>MM</div>
-      </div>
+      <AppShell session={session} pageName="Profile">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+          <div style={{ fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: '1.5rem', fontWeight: 700, color: '#c8a050', animation: 'pulse 2s infinite' }}>MM</div>
+          <style>{`@keyframes pulse{0%,100%{opacity:0.2}50%{opacity:1}}`}</style>
+        </div>
+      </AppShell>
     )
   }
 
@@ -233,19 +227,11 @@ export default function Profile({ session }) {
 
   // ── Render ──────────────────────────────────────
   return (
-    <div style={s.page}>
-      <nav style={s.nav}>
-        <div style={s.navLogo} onClick={() => navigate('/dashboard')}>
-          <span style={s.navMM}>MM</span>Mystic Madman
-        </div>
-        <button style={s.navBtn} onClick={() => navigate('/dashboard')}>← Dashboard</button>
-      </nav>
-
-      <div style={s.body}>
-        <div style={s.header}>
-          <h1 style={s.title}>Your Profile</h1>
-          <p style={s.subtitle}>Revisit and update anything at any time</p>
-        </div>
+    <AppShell session={session} pageName="Profile">
+      <div style={{ marginBottom: '2rem' }}>
+        <h1 style={{ fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 400, color: '#f0e6c8', marginBottom: '0.3rem' }}>Your Foundation</h1>
+        <p style={{ fontFamily: "'Lora',Georgia,serif", fontSize: '0.85rem', color: '#a09070', fontStyle: 'italic' }}>Everything Sage knows about you — update any time</p>
+      </div>
 
         {/* Account panel */}
         <Panel id="account" icon="🔑" title="Account" summary={session.user.email}>
@@ -484,7 +470,6 @@ export default function Profile({ session }) {
             <button style={s.secondaryBtn} onClick={() => navigate('/onboarding')}>Begin →</button>
           </div>
         )}
-      </div>
-    </div>
+    </AppShell>
   )
 }
