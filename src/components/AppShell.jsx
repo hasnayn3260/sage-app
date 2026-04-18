@@ -11,11 +11,23 @@ const LIFE_AREAS_NAV = [
   { icon: '🏠', label: 'Home & Family' },
   { icon: '🌱', label: 'Growth & Change' },
 ]
-const LENSES_NAV = [
+const OUTER_NAV = [
+  { icon: '🏃', label: 'Physical Practice' },
+  { icon: '🍃', label: 'Nutrition & Protocols' },
+  { icon: '💰', label: 'Money & Finances' },
+  { icon: '🎨', label: 'Creative Practice' },
+  { icon: '🧘', label: 'Contemplative' },
+  { icon: '🤝', label: 'Social & Community' },
+]
+const INNER_NAV = [
   { icon: '🌙', label: 'Dreams' },
   { icon: '✨', label: 'Astrology' },
   { icon: '🔢', label: 'Numerology' },
   { icon: '🔮', label: 'Intuitive' },
+  { icon: '🃏', label: 'Tarot & Oracle' },
+  { icon: '☯️', label: 'Human Design' },
+  { icon: '🌑', label: 'Shadow Work' },
+  { icon: '🌿', label: 'Lunar & Cycles' },
 ]
 
 const NAV_ITEMS = [
@@ -179,8 +191,17 @@ export default function AppShell({ session, pageName, children }) {
               ))}
             </SidebarSection>
 
-            <SidebarSection label="Lenses">
-              {LENSES_NAV.map(l => (
+            <SidebarSection label="The Outer">
+              {OUTER_NAV.map(l => (
+                <SidebarItem key={l.label} C={C}>
+                  <span style={{ fontSize: '0.85rem' }}>{l.icon}</span>
+                  <span>{l.label}</span>
+                </SidebarItem>
+              ))}
+            </SidebarSection>
+
+            <SidebarSection label="The Inner">
+              {INNER_NAV.map(l => (
                 <SidebarItem key={l.label} C={C}>
                   <span style={{ fontSize: '0.85rem' }}>{l.icon}</span>
                   <span>{l.label}</span>
